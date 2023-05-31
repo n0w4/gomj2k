@@ -10,6 +10,6 @@ type StructuredMessage struct {
 }
 
 type HeaderContent struct {
-	Key   string          `json:"key"`
-	Value json.RawMessage `json:"value"`
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }

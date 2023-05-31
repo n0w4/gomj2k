@@ -38,7 +38,7 @@ func (k *kafkaBroker) WithProducer() *kafkaBroker {
 	return k
 }
 
-func (k *kafkaBroker) Publish(messages ...model.StructuredMessage) error {
+func (k *kafkaBroker) Publish(messages ...model.StructuredMessage) {
 	retryPolicy := gombackoff.NewRetryPolicy().ExponentialBackoff(5).Times(3)
 
 	deliveryChan := make(chan kafka.Event, 1000)
@@ -54,7 +54,7 @@ func (k *kafkaBroker) Publish(messages ...model.StructuredMessage) error {
 			continue
 		}
 		for _, h := range message.Headers {
-			headers = append(headers, kafka.Header{Key: h.Key, Value: h.Value})
+			headers = append(headers, kafka.Header{Key: h.Key, Value: []byte(h.Value)})
 		}
 
 		for {
@@ -86,7 +86,6 @@ func (k *kafkaBroker) Publish(messages ...model.StructuredMessage) error {
 
 	close(deliveryChan)
 	<-finishChan
-	return nil
 }
 
 func producerErrorListener(p *kafka.Producer) {
