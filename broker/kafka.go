@@ -2,6 +2,7 @@ package broker
 
 import (
 	"log"
+	"os"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
@@ -80,8 +81,8 @@ func (k *kafkaBroker) Publish(messages ...model.StructuredMessage) {
 		}
 	}
 
-	for k.producer.Flush(5000) > 0 {
-		log.Println("Flushing")
+	for i := k.producer.Flush(10000); i > 0; {
+		log.Printf("Flushing... %d remaining \n", i)
 	}
 
 	close(deliveryChan)
@@ -93,6 +94,7 @@ func producerErrorListener(p *kafka.Producer) {
 		switch ev := e.(type) {
 		case kafka.Error:
 			log.Printf("Error: %v\n", ev)
+			os.Exit(1)
 		default:
 			log.Printf("Ignored event: %s\n", ev)
 		}

@@ -7,7 +7,7 @@ var toTopicUsage string = `what topic do you want to send to.
 
 func (f *flags) toTopic() {
 	var tt string
-	flag.StringVar(&tt, "to-topic", "", toTopicUsage)
+	flag.StringVar(&tt, "topic", "", toTopicUsage)
 	if tt == "" {
 		f.ToTopic = nil
 	}
